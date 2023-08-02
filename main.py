@@ -39,7 +39,11 @@ class ResultPage(MethodView):
         flatmate1 = flat.Flatmate(name=name1, days_in_house=days_in_house1)
         flatmate2 = flat.Flatmate(name=name2, days_in_house=days_in_house2)
 
-        return f"{flatmate1.name} pays {flatmate1.pays(bill=the_bill, flatmate2=flatmate2)}"
+        return render_template("results.html",
+                               name1=flatmate1.name,
+                               amount1=flatmate1.pays(bill=the_bill, flatmate2=flatmate2),
+                               name2=flatmate2.name,
+                               amount2=flatmate2.pays(bill=the_bill, flatmate2=flatmate1))
 
 
 class BillForm(Form):
