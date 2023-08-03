@@ -20,6 +20,30 @@ class BillFormPage(MethodView):
         bill_form = BillForm()
         return render_template('bill_form_page.html', bill_form=bill_form)
 
+    def post(self):
+        bill_form = BillForm(request.form)
+        amount = float(bill_form.amount.data)
+        period = bill_form.period.data
+
+        name1 = bill_form.name1.data
+        days_in_house1 = float(bill_form.days_in_house1.data)
+
+        name2 = bill_form.name2.data
+        days_in_house2 = float(bill_form.days_in_house2.data)
+
+        the_bill = flat.Bill(amount=amount, period=period)
+        flatmate1 = flat.Flatmate(name=name1, days_in_house=days_in_house1)
+        flatmate2 = flat.Flatmate(name=name2, days_in_house=days_in_house2)
+
+        return render_template("bill_form_page.html",
+                               result=True,
+                               bill_form=bill_form,
+                               name1=flatmate1.name,
+                               amount1=flatmate1.pays(bill=the_bill, flatmate2=flatmate2),
+                               name2=flatmate2.name,
+                               amount2=flatmate2.pays(bill=the_bill, flatmate2=flatmate1))
+
+
 
 class ResultPage(MethodView):
     """Represents a page with results of app work."""
@@ -63,6 +87,6 @@ class BillForm(Form):
 
 app.add_url_rule('/', view_func=HomePage.as_view('home_page'))
 app.add_url_rule('/bill_form', view_func=BillFormPage.as_view('bill_form_page'))
-app.add_url_rule('/results', view_func=ResultPage.as_view('result_page'))
+# app.add_url_rule('/results', view_func=ResultPage.as_view('result_page'))
 
 app.run(debug=True)
